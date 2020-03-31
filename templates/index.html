@@ -1,0 +1,105 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ο.cc - 短域名</title>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+}
+
+#world {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background: linear-gradient(#e4e0ba, #f7d9aa);
+	z-index: -1;
+	position : absolute;
+}
+</style>
+<link rel="shortcut icon" href="/static/ico/favicon.ico" type="image/x-icon" >
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="static/js/three.min.js"></script>
+<script src="static/js/html.js"></script>
+</head>
+<body>
+<div id="world"></div>
+<br><br><br>
+<div class="container" style="width:600px">
+  <div align="center"><a href="/"><img src="static/img/logo.jpg" /></a></div><br>
+	<form action = "/" method = "post" id="shortform">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control " placeholder="请输入需要缩短的网址" value = "{{ url }}" name="url" style="height:44px">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type ="button" id="btn">缩短网址</button>
+            </div>
+        </div>
+        <div class="input-group mb-3" style="height:44px">
+            <div class="input-group-prepend">
+                <span class="input-group-text">后缀</span>
+            </div>
+            <input type="text" class="form-control col" placeholder="空则随机" name="name" style="height:44px">&nbsp;
+            <select name="type" class="custom-select-sm col" style="height:44px">
+                <option value="1">1 Hour</option>
+                <option value="2">1 Day</option>
+                <option value="3">1 Week</option>
+                <option value="4">1 Month</option>
+                <option value="5">1 Year</option>
+            </select>&nbsp;
+            <div id="embed-captcha"></div>
+        </div>
+    </form>
+</div>
+
+<script src="/static/js/gt.js"></script>
+<script>
+    var handlerEmbed = function (captchaObj) {
+        $("#embed-submit").click(function (e) {
+            var validate = captchaObj.getValidate();
+        });
+        captchaObj.appendTo("#embed-captcha");
+    };
+    $.ajax({
+        url: "/captcha?t=" + (new Date()).getTime(),
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                product: "embed",
+                offline: !data.success,
+                new_captcha: data.new_captcha
+            }, handlerEmbed);
+        }
+    });
+</script>
+<script>
+  $(function () {
+      $('#btn').click(function () {
+          post_data = $('#shortform').serialize();
+          $.ajax({
+              url: "/",
+              type: 'POST',
+              data: post_data,
+              success: function (data) {
+                  if (data['code'] == 200) {
+											$("form").append('<div class="alert alert-success alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>生成短域名为(请勿手动输入)：<br>普通版: http://ο.cc/'+ data['info'] +'<br>XSS版:&nbsp; http://ο.㏄/'+ data['info'] + '</div>');
+                  }
+                  else {
+											$("form").append('<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>'+ data['info'] + '</div>');
+
+                  }
+              }
+          });
+      });
+  });
+</script>
+
+</body>
+</html>
