@@ -1,7 +1,7 @@
 # short_url
 好看的短网址生成
 
-演示地址 ： http://ο.cc/
+https://kfi.re/827.html
 
 1.导入url.sql
 
